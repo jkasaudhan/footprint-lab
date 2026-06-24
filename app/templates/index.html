@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <p class="eyebrow">Footprint exposure check</p>
+  <h1 class="hero__title">See yourself the way <span class="hl">an attacker would</span>.</h1>
+  <p class="hero__lede">
+    Enter your email and verify it's yours. The lab then surfaces where that
+    address is registered and whether it's turned up in known breaches — the
+    raw material an attacker uses to target and impersonate you.
+  </p>
+</section>
+
+<form class="card" method="post" action="/start">
+  <label class="field">
+    <span class="field__label">Your email <span class="req">(verified before any scan)</span></span>
+    <input class="field__input mono" type="email" name="email"
+           placeholder="you@domain.com" required autofocus autocomplete="off">
+  </label>
+
+  <label class="consent">
+    <input type="checkbox" name="consent" value="yes" required>
+    <span>I confirm this is my own email, or one I have explicit permission to check.</span>
+  </label>
+
+  <button class="btn" type="submit">Send verification code</button>
+</form>
+{% endblock %}

@@ -1,0 +1,18 @@
+# Replace footprint.deepfakefinance.com with your real domain.
+# Caddy fetches and renews Let's Encrypt certs automatically once DNS points here.
+footprint.deepfakefinance.com {
+    reverse_proxy app:7860
+    encode gzip
+
+    header {
+        Strict-Transport-Security "max-age=31536000;"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        Referrer-Policy "no-referrer"
+    }
+}
+
+# For local testing without a domain, comment out the block above and use:
+# http://localhost {
+#     reverse_proxy app:7860
+# }

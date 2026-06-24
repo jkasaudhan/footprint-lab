@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero hero--tight">
+  <p class="eyebrow">Email exposure report</p>
+  <h1 class="hero__title">What's exposed about your email</h1>
+  <p class="hero__lede">
+    Scanned <span class="mono">{{ email_masked }}</span> with open-source email
+    OSINT (Holehe) and Have I Been Pwned. Nothing here was saved.
+  </p>
+</section>
+
+<div class="summary">
+  <span class="chip chip--critical">{{ report.counts.critical }} critical</span>
+  <span class="chip chip--notable">{{ report.counts.notable }} notable</span>
+  <span class="chip chip--info">{{ report.counts.info }} info</span>
+</div>
+
+<ul class="findings">
+  {% for f in report.findings %}
+  <li class="finding finding--{{ f.severity }}">
+    <div class="finding__head">
+      <span class="finding__sev mono">{{ f.severity }}</span>
+      <h2 class="finding__title">{{ f.title }}</h2>
+    </div>
+    {% if f.detail %}<p class="finding__detail mono">{{ f.detail }}</p>{% endif %}
+    {% if f.attacker_note %}
+    <p class="finding__note"><span class="finding__note-label">Why an attacker cares</span>{{ f.attacker_note }}</p>
+    {% endif %}
+    {% if f.mitigation %}
+    <p class="finding__fix"><span class="finding__note-label">Reduce it</span>{{ f.mitigation }}</p>
+    {% endif %}
+  </li>
+  {% endfor %}
+</ul>
+
+<div class="actions-row">
+  <a class="link-quiet" href="/email-scan" onclick="document.getElementById('loading') && document.getElementById('loading').classList.add('is-on')">Re-scan this email</a>
+  {% if research_enabled and request.session.get('verified') %}
+  <a class="link-quiet" href="/research">Open username research →</a>
+  {% endif %}
+</div>
+{% endblock %}

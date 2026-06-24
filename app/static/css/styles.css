@@ -1,0 +1,257 @@
+/* ============================================================================
+   DEEPFAKE FINANCE BRAND TOKENS
+   Primary #038095 · Yellow #FBD884 · Text #131212 · Background #FDFCFD
+   Font: Trebuchet MS. Everything below derives from this block.
+   (Critical red is derived — the brand has no red — and tuned for contrast.)
+   ============================================================================ */
+:root {
+  --primary:   #038095;
+  --yellow:    #FBD884;
+  --text:      #131212;
+  --bg:        #FDFCFD;
+
+  --font: "Trebuchet MS", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+
+  /* derived */
+  --surface:      #FFFFFF;
+  --hairline:     rgba(19, 18, 18, 0.12);
+  --muted:        #5E5C5C;
+  --primary-deep: #026475;                 /* darker teal for hovers        */
+  --primary-soft: rgba(3, 128, 149, 0.08); /* teal tint fills               */
+  --yellow-deep:  #8A6400;                 /* readable text on yellow tints */
+  --critical:     #C0392B;                 /* derived alert red             */
+  --critical-soft:rgba(192, 57, 43, 0.08);
+
+  --radius: 14px;
+  --maxw: 720px;
+  --shadow: 0 1px 2px rgba(19, 18, 18, 0.05), 0 8px 24px rgba(19, 18, 18, 0.04);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* repurposed: brand uses a single typeface, so data bits just get light tracking */
+.mono { font-family: var(--font); letter-spacing: 0.01em; }
+
+/* ---- masthead + scanline signature ---- */
+.masthead { position: relative; border-bottom: 1px solid var(--hairline); background: var(--bg); }
+.masthead__inner {
+  max-width: var(--maxw); margin: 0 auto; padding: 18px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); }
+.brand__mark {
+  width: 14px; height: 14px; border-radius: 3px; background: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+}
+.brand__name { font-weight: 700; letter-spacing: -0.01em; }
+.brand__tag { color: var(--muted); font-size: 0.8rem; }
+
+.scanline {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  background-size: 40% 100%; background-repeat: no-repeat;
+  animation: sweep 4.5s linear infinite;
+}
+@keyframes sweep { 0% { background-position: -40% 0; } 100% { background-position: 140% 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .scanline { animation: none; opacity: 0.6; background-position: 50% 0; }
+}
+
+/* ---- layout ---- */
+.wrap { max-width: var(--maxw); margin: 0 auto; padding: 44px 20px 64px; }
+
+.hero { margin-bottom: 32px; }
+.hero--tight { margin-bottom: 20px; }
+.eyebrow {
+  font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.16em;
+  color: var(--primary); margin: 0 0 10px; font-weight: 700;
+}
+.hero__title {
+  font-weight: 700; line-height: 1.1; font-size: clamp(1.9rem, 6vw, 2.8rem);
+  margin: 0 0 14px; letter-spacing: -0.02em;
+}
+/* yellow highlight = the brand "flag the critical thing" motif */
+.hl {
+  background: var(--yellow); color: var(--text);
+  padding: 0.02em 0.28em; border-radius: 4px; box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+.hero__lede { color: var(--muted); font-size: 1.05rem; max-width: 56ch; margin: 0; }
+
+/* ---- card / form ---- */
+.card {
+  background: var(--surface); border: 1px solid var(--hairline);
+  border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow);
+  display: flex; flex-direction: column; gap: 18px;
+}
+.field { display: flex; flex-direction: column; gap: 7px; }
+.field__label { font-size: 0.9rem; font-weight: 700; }
+.req { color: var(--muted); font-weight: 400; }
+.field__input {
+  background: var(--bg); border: 1px solid var(--hairline); border-radius: 9px;
+  color: var(--text); padding: 12px 14px; font-size: 1rem; width: 100%; font-family: var(--font);
+}
+.field__input:focus { outline: 2px solid var(--primary); outline-offset: 1px; border-color: transparent; }
+.code-input { letter-spacing: 0.5em; font-size: 1.4rem; text-align: center; }
+
+.consent { display: flex; gap: 11px; align-items: flex-start; font-size: 0.92rem; color: var(--muted); }
+.consent input { margin-top: 3px; accent-color: var(--primary); width: 17px; height: 17px; }
+
+.btn {
+  background: var(--primary); color: #fff; border: none; border-radius: 9px;
+  font-family: var(--font); font-weight: 700; font-size: 1rem;
+  padding: 13px 18px; cursor: pointer; transition: background .15s ease, transform .08s ease;
+}
+.btn:hover { background: var(--primary-deep); }
+.btn:active { transform: translateY(1px); }
+.btn:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+
+.link-quiet { color: var(--muted); text-decoration: none; font-size: 0.9rem; border-bottom: 1px dotted var(--hairline); align-self: flex-start; }
+.link-quiet:hover { color: var(--primary); border-bottom-color: var(--primary); }
+.center { display: block; text-align: center; margin: 30px auto 0; width: fit-content; }
+
+/* ---- flash (brand yellow = attention) ---- */
+.flash {
+  background: color-mix(in srgb, var(--yellow) 38%, var(--surface));
+  border: 1px solid var(--yellow); color: var(--text);
+  border-radius: 10px; padding: 12px 14px; margin-bottom: 22px; font-size: 0.92rem;
+}
+
+/* ---- results ---- */
+.summary { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; }
+.chip {
+  font-size: 0.8rem; font-weight: 700; padding: 5px 11px; border-radius: 999px;
+  border: 1px solid var(--hairline); background: var(--surface);
+}
+.chip--critical { color: var(--critical);     border-color: color-mix(in srgb, var(--critical) 45%, transparent); background: var(--critical-soft); }
+.chip--notable  { color: var(--yellow-deep);   border-color: color-mix(in srgb, var(--yellow) 80%, transparent); background: color-mix(in srgb, var(--yellow) 30%, var(--surface)); }
+.chip--info     { color: var(--primary);       border-color: color-mix(in srgb, var(--primary) 40%, transparent); background: var(--primary-soft); }
+
+.findings { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 14px; }
+.finding {
+  background: var(--surface); border: 1px solid var(--hairline);
+  border-left: 3px solid var(--muted); border-radius: var(--radius);
+  padding: 18px 20px; box-shadow: var(--shadow);
+}
+.finding--critical { border-left-color: var(--critical); }
+.finding--notable  { border-left-color: var(--yellow); }
+.finding--info     { border-left-color: var(--primary); }
+
+.finding__head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 8px; flex-wrap: wrap; }
+.finding__sev {
+  font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700;
+  padding: 3px 8px; border-radius: 5px; background: var(--bg); color: var(--muted);
+}
+.finding--critical .finding__sev { color: var(--critical); }
+.finding--notable  .finding__sev { color: var(--yellow-deep); }
+.finding--info     .finding__sev { color: var(--primary); }
+.finding__title { font-size: 1.1rem; margin: 0; font-weight: 700; }
+.finding__detail { color: var(--muted); font-size: 0.85rem; margin: 0 0 10px; word-break: break-word; }
+.finding__note, .finding__fix { font-size: 0.92rem; margin: 8px 0 0; color: var(--text); }
+.finding__note-label {
+  display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--muted); margin-bottom: 2px; font-weight: 700;
+}
+
+/* ---- footer ---- */
+.foot { border-top: 1px solid var(--hairline); }
+.foot p { max-width: var(--maxw); margin: 0 auto; padding: 22px 20px 40px; color: var(--muted); font-size: 0.85rem; }
+.foot strong { color: var(--text); }
+
+/* ---- research page (localhost) ---- */
+.brand__research {
+  font-size: 0.8rem; font-weight: 700; color: var(--primary); text-decoration: none;
+  border: 1px solid color-mix(in srgb, var(--primary) 35%, transparent);
+  background: var(--primary-soft); padding: 5px 11px; border-radius: 999px;
+}
+.brand__research:hover { background: color-mix(in srgb, var(--primary) 14%, var(--surface)); }
+.muted-note { color: var(--muted); font-size: 0.82rem; margin: 0; }
+
+.panel {
+  background: var(--surface); border: 1px solid var(--hairline);
+  border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); margin-top: 6px;
+}
+.panel__title {
+  margin: 0 0 14px; font-size: 0.78rem; text-transform: uppercase;
+  letter-spacing: 0.14em; color: var(--primary);
+}
+.profile { margin: 0; display: flex; flex-direction: column; gap: 0; }
+.profile__row { display: grid; grid-template-columns: 150px 1fr; gap: 14px; padding: 9px 0; border-top: 1px solid var(--hairline); }
+.profile__row:first-child { border-top: none; }
+.profile dt { font-weight: 700; text-transform: capitalize; color: var(--text); }
+.profile dd { margin: 0; color: var(--text); word-break: break-word; }
+.profile dd a { color: var(--primary); }
+
+.tag {
+  font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--yellow-deep); background: color-mix(in srgb, var(--yellow) 32%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--yellow) 70%, transparent);
+  padding: 2px 7px; border-radius: 5px; font-weight: 700;
+}
+.ids { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+.id-chip {
+  font-size: 0.8rem; background: var(--bg); border: 1px solid var(--hairline);
+  border-radius: 7px; padding: 4px 9px; color: var(--text); word-break: break-word;
+}
+.id-chip b { color: var(--primary); font-weight: 700; margin-right: 4px; }
+
+.pdf-form { margin-top: 14px; }
+.btn--ghost {
+  background: transparent; color: var(--primary);
+  border: 1px solid color-mix(in srgb, var(--primary) 45%, transparent);
+}
+.btn--ghost:hover { background: var(--primary-soft); }
+
+/* ---- loading overlay / spinner ---- */
+.loading {
+  position: fixed; inset: 0; z-index: 1000;
+  display: none; align-items: center; justify-content: center;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: blur(2px);
+}
+.loading.is-on { display: flex; }
+.loading__box {
+  background: var(--surface); border: 1px solid var(--hairline);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  padding: 30px 36px; text-align: center; max-width: 320px;
+}
+.spinner {
+  width: 42px; height: 42px; margin: 0 auto 16px;
+  border: 4px solid color-mix(in srgb, var(--primary) 20%, transparent);
+  border-top-color: var(--primary);
+  border-radius: 50%; animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading__msg { margin: 0 0 6px; font-weight: 700; color: var(--text); }
+.loading__sub { margin: 0; font-size: 0.82rem; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) {
+  .spinner { animation-duration: 2s; }
+}
+
+/* ---- live scan progress panel ---- */
+.progress {
+  margin-top: 18px; background: var(--surface); border: 1px solid var(--hairline);
+  border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow);
+}
+.progress__head { display: flex; align-items: center; gap: 12px; font-weight: 700; margin-bottom: 12px; }
+.progress__head .spinner { width: 22px; height: 22px; border-width: 3px; margin: 0; }
+.scanlog {
+  max-height: 280px; overflow: auto; margin: 0;
+  background: var(--bg); border: 1px solid var(--hairline); border-radius: 8px;
+  padding: 12px; font-size: 0.78rem; line-height: 1.5; color: var(--muted);
+  white-space: pre-wrap; word-break: break-word;
+}
+
+/* ---- inline links & action rows ---- */
+.inline-link { color: var(--primary); font-weight: 700; text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--primary) 35%, transparent); }
+.inline-link:hover { border-bottom-color: var(--primary); }
+.actions-row { display: flex; gap: 22px; flex-wrap: wrap; justify-content: center; margin-top: 30px; }

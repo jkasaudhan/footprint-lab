@@ -1,0 +1,29 @@
+# Production run with automatic HTTPS via Caddy.
+# Point your domain's DNS at the server, set it in ./Caddyfile, then:
+#   docker compose -f docker-compose.prod.yml up --build -d
+services:
+  app:
+    build: .
+    env_file: .env
+    environment:
+      - ENABLE_RESEARCH=0      # research page stays off in public production
+    expose:
+      - "7860"
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2-alpine
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    restart: unless-stopped
+
+volumes:
+  caddy_data:
+  caddy_config:

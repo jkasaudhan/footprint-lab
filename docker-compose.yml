@@ -1,0 +1,9 @@
+# Local run -> http://localhost:7860
+# Usage:  docker compose up --build
+services:
+  app:
+    build: .
+    env_file: .env
+    ports:
+      - "7860:7860"
+    restart: unless-stopped

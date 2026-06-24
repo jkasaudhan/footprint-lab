@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ app_name }}</title>
+  <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+  <header class="masthead">
+    <div class="masthead__inner">
+      <a class="brand" href="/">
+        <span class="brand__mark" aria-hidden="true"></span>
+        <span class="brand__name">{{ app_name }}</span>
+      </a>
+      {% if research_enabled and request.session.get('verified') %}
+      <a class="brand__research" href="/research">Research</a>
+      {% else %}
+      <span class="brand__tag">by Deepfake&nbsp;Finance</span>
+      {% endif %}
+    </div>
+    <div class="scanline" aria-hidden="true"></div>
+  </header>
+
+  <main class="wrap">
+    {% if flash %}<div class="flash" role="alert">{{ flash }}</div>{% endif %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="foot">
+    <p>This tool is for checking <strong>your own</strong> digital footprint, so you can
+       see what an attacker could harvest and reduce it. It stores nothing, and a deep
+       scan only runs against an email you verify you control.</p>
+  </footer>
+
+  <!-- Loading overlay: shown while a form-triggered scan runs behind the scenes -->
+  <div id="loading" class="loading" aria-hidden="true" role="status">
+    <div class="loading__box">
+      <div class="spinner" aria-hidden="true"></div>
+      <p class="loading__msg" id="loadingMsg">Working…</p>
+      <p class="loading__sub">This can take from a few seconds to a couple of minutes.</p>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var overlay = document.getElementById('loading');
+      var msgEl = document.getElementById('loadingMsg');
+      var messages = {
+        '/start':    'Sending your verification code…',
+        '/verify':   'Verifying…',
+        '/research': 'Scanning across thousands of sites…'
+      };
+      document.querySelectorAll('form').forEach(function (form) {
+        if (form.classList.contains('no-spinner')) return;  // e.g. PDF download
+        form.addEventListener('submit', function () {
+          var action = form.getAttribute('action') || '';
+          msgEl.textContent = messages[action] || 'Working…';
+          overlay.classList.add('is-on');
+        });
+      });
+      // Hide the overlay if the user returns via the back/forward cache.
+      window.addEventListener('pageshow', function () { overlay.classList.remove('is-on'); });
+    })();
+  </script>
+</body>
+</html>

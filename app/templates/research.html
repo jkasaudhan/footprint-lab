@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero hero--tight">
+  <p class="eyebrow">Local research · authorized use only</p>
+  <h1 class="hero__title">Deep username <span class="hl">recon</span></h1>
+  <p class="hero__lede">
+    Runs Maigret across thousands of sites for a single handle and pulls back
+    real profile details it can extract — names, locations, avatars, linked
+    accounts. This page is for your own authorized research and never ships to
+    the public deployment.
+  </p>
+  <p class="hero__lede" style="margin-top:14px;">
+    Want to check the <strong>email you verified</strong> instead? That's a
+    separate, email-only scan (Holehe + Have I Been Pwned).
+    <a class="inline-link" href="/email-scan"
+       onclick="var o=document.getElementById('loading'); if(o){o.querySelector('#loadingMsg').textContent='Scanning your email…'; o.classList.add('is-on');}">Scan my email →</a>
+  </p>
+</section>
+
+<form id="scanForm" class="card no-spinner" method="post" action="/research">
+  <label class="field">
+    <span class="field__label">Username / handle</span>
+    <input class="field__input mono" type="text" name="username"
+           value="{{ submitted or '' }}" placeholder="e.g. jdoe" required autofocus autocomplete="off">
+  </label>
+
+  <label class="field">
+    <span class="field__label">Scan depth</span>
+    <select class="field__input" name="depth">
+      <option value="top">Top {{ default_top }} sites — faster</option>
+      <option value="all">All sites — thorough, can take minutes</option>
+    </select>
+  </label>
+
+  <label class="consent">
+    <input type="checkbox" name="acknowledge" value="yes" required>
+    <span>This is research I'm authorized to perform.</span>
+  </label>
+
+  <button class="btn" type="submit">Run recon</button>
+  <p class="muted-note">Scans run live and may take from several seconds to a few minutes.</p>
+</form>
+
+<div id="progress" class="progress" hidden>
+  <div class="progress__head">
+    <div class="spinner" aria-hidden="true"></div>
+    <span id="progressMsg">Scanning across thousands of sites…</span>
+  </div>
+  <pre id="scanlog" class="scanlog" aria-live="polite"></pre>
+</div>
+
+<script>
+  (function () {
+    var form = document.getElementById('scanForm');
+    if (!form) return;
+    var progress = document.getElementById('progress');
+    var logEl = document.getElementById('scanlog');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var ack = form.querySelector('[name=acknowledge]');
+      if (!ack || !ack.checked) { alert('Confirm this is authorized research first.'); return; }
+
+      progress.hidden = false;
+      logEl.textContent = '';
+      form.querySelector('button[type=submit]').disabled = true;
+
+      fetch('/research/start', { method: 'POST', body: new FormData(form) })
+        .then(function (res) {
+          if (!res.ok) throw new Error('start ' + res.status);
+          return res.json();
+        })
+        .then(function (data) {
+          var es = new EventSource('/research/events/' + data.token);
+          es.onmessage = function (ev) {
+            logEl.textContent += ev.data + '\n';
+            logEl.scrollTop = logEl.scrollHeight;
+          };
+          es.addEventListener('done', function () {
+            es.close();
+            window.location = '/research/result/' + data.token;
+          });
+          es.addEventListener('failed', function () {
+            es.close();
+            logEl.textContent += '\n[!] Scan session expired. Please try again.';
+            form.querySelector('button[type=submit]').disabled = false;
+          });
+        })
+        .catch(function () {
+          logEl.textContent = 'Could not start the scan. Is the research page enabled and your email verified?';
+          form.querySelector('button[type=submit]').disabled = false;
+        });
+    });
+  })();
+</script>
+
+
+{% if result %}
+  {% if result.error %}
+    <div class="flash">{{ result.error }}</div>
+  {% else %}
+    <section class="hero hero--tight" style="margin-top:36px;">
+      <p class="eyebrow">{{ result.found_count }} account(s) · {{ depth_label }}</p>
+      <h2 class="hero__title" style="font-size:clamp(1.5rem,5vw,2rem);">
+        Results for <span class="mono">{{ result.username }}</span>
+      </h2>
+      <form method="post" action="/research/pdf" class="pdf-form no-spinner">
+        <input type="hidden" name="payload" value='{{ result|tojson }}'>
+        <input type="hidden" name="depth_label" value="{{ depth_label }}">
+        <button class="btn btn--ghost" type="submit">Download PDF</button>
+      </form>
+    </section>
+
+    {% if result.profile %}
+    <div class="panel">
+      <h3 class="panel__title">Aggregated profile</h3>
+      <dl class="profile">
+        {% for field, values in result.profile.items() %}
+        <div class="profile__row">
+          <dt>{{ field|replace('_',' ') }}</dt>
+          <dd>
+            {% for v in values %}
+              {% if v.startswith('http') %}<a href="{{ v }}" target="_blank" rel="noopener" class="mono">{{ v }}</a>{% else %}<span class="mono">{{ v }}</span>{% endif %}{% if not loop.last %} · {% endif %}
+            {% endfor %}
+          </dd>
+        </div>
+        {% endfor %}
+      </dl>
+    </div>
+    {% endif %}
+
+    {% if result.accounts %}
+    <ul class="findings" style="margin-top:18px;">
+      {% for acc in result.accounts %}
+      <li class="finding finding--info">
+        <div class="finding__head">
+          <h3 class="finding__title">{{ acc.site }}</h3>
+          {% for t in acc.tags %}<span class="tag">{{ t }}</span>{% endfor %}
+        </div>
+        {% if acc.url %}<a class="finding__detail mono" href="{{ acc.url }}" target="_blank" rel="noopener">{{ acc.url }}</a>{% endif %}
+        {% if acc.ids %}
+        <div class="ids">
+          {% for k, v in acc.ids.items() %}<span class="id-chip"><b>{{ k }}</b> {{ v }}</span>{% endfor %}
+        </div>
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="hero__lede">No accounts found for that handle at this depth.</p>
+    {% endif %}
+  {% endif %}
+{% endif %}
+{% endblock %}

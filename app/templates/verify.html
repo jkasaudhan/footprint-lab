@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <p class="eyebrow">Step 2 of 2</p>
+  <h1 class="hero__title">Confirm it's you.</h1>
+  <p class="hero__lede">
+    We sent a 6-digit code to <span class="mono">{{ email }}</span>. Enter it to
+    run the scan. In dev mode the code is printed to the server log.
+  </p>
+</section>
+
+<form class="card" method="post" action="/verify">
+  <label class="field">
+    <span class="field__label">Verification code</span>
+    <input class="field__input mono code-input" type="text" name="code"
+           inputmode="numeric" maxlength="6" placeholder="000000" required autofocus>
+  </label>
+  <button class="btn" type="submit">Verify and scan</button>
+  <a class="link-quiet" href="/">Start over</a>
+</form>
+{% endblock %}
